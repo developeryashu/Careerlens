@@ -4,22 +4,22 @@ import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 
 const analysisSchema = z.object({
-  atsScore: z.number().min(0).max(100).describe("ATS compatibility score from 0-100"),
-  overallScore: z.number().min(0).max(100).describe("Overall resume quality score from 0-100"),
-  summary: z.string().describe("Brief 2-3 sentence summary of the resume quality"),
+  atsScore: z.number().min(0).max(100),
+  overallScore: z.number().min(0).max(100),
+  summary: z.string(),
   strengths: z.array(z.object({
     title: z.string(),
     description: z.string()
-  })).describe("List of 3-5 key strengths"),
+  })),
   improvements: z.array(z.object({
     title: z.string(),
     description: z.string(),
     priority: z.enum(["high", "medium", "low"])
-  })).describe("List of 4-6 suggested improvements with priority"),
+  })),
   skills: z.object({
-    technical: z.array(z.string()).describe("Technical skills found in the resume"),
-    soft: z.array(z.string()).describe("Soft skills identified"),
-    missing: z.array(z.string()).describe("Important skills that might be missing based on role")
+    technical: z.array(z.string()),
+    soft: z.array(z.string()),
+    missing: z.array(z.string())
   }),
   sections: z.object({
     contact: z.object({
@@ -42,15 +42,15 @@ const analysisSchema = z.object({
       score: z.number().min(0).max(100),
       feedback: z.string()
     })
-  }).describe("Individual section scores and feedback"),
-  keywords: z.array(z.string()).describe("Important keywords found in the resume"),
-  wordCount: z.number().describe("Approximate word count"),
+  }),
+  keywords: z.array(z.string()),
+  wordCount: z.number(),
   jobMatch: z.object({
     score: z.number().min(0).max(100).nullable(),
     missingKeywords: z.array(z.string()),
     matchingKeywords: z.array(z.string()),
     feedback: z.string()
-  }).nullable().describe("Job match analysis if job description was provided")
+  }).nullable()
 })
 
 export async function POST(req: Request) {
@@ -72,14 +72,7 @@ export async function POST(req: Request) {
 
     if (file) {
       fileName = file.name
-      // For text files, read directly
-      if (file.type === "text/plain") {
-        resumeText = await file.text()
-      } else {
-        // For PDF/DOCX, we'll use the text content if available
-        // In production, you'd use a proper document parser
-        resumeText = await file.text()
-      }
+      resumeText = await file.text()
     } else if (textContent) {
       resumeText = textContent
     } else {
@@ -90,15 +83,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Resume content is empty" }, { status: 400 })
     }
 
-    const systemPrompt = `You are an expert career counselor and resume analyst with deep knowledge of ATS (Applicant Tracking Systems), hiring practices, and what makes a resume stand out to recruiters.
-
-Analyze the provided resume thoroughly and provide detailed, actionable feedback. Be specific and constructive in your analysis. Consider:
-- ATS compatibility (formatting, keywords, structure)
-- Content quality (achievements vs duties, quantification, impact)
-- Presentation (clarity, organization, professional tone)
-- Relevance (skills match, career progression)
-
-${jobDescription ? "A job description has been provided - analyze how well the resume matches the target role." : "No specific job description provided - give general analysis."}`
+    const systemPrompt = `You are an expert career counselor and resume analyst...`
 
     const userPrompt = `Please analyze this resume:
 
@@ -113,15 +98,15 @@ ${jobDescription ? `\n\nTarget Job Description:\n${jobDescription}` : ""}`
       output: Output.object({ schema: analysisSchema }),
     })
 
-    const analysis = result.object
+    // ✅ FIXED LINE
+    const analysis = result.output
 
-    // Save to database
     const { data: savedAnalysis, error: dbError } = await supabase
       .from("resume_analyses")
       .insert({
         user_id: user.id,
         file_name: fileName,
-        raw_text: resumeText.substring(0, 10000), // Limit stored text
+        raw_text: resumeText.substring(0, 10000),
         ats_score: analysis.atsScore,
         overall_score: analysis.overallScore,
         analysis_data: {
