@@ -99,7 +99,8 @@ Provide a comprehensive evaluation of this professional profile, including score
       output: Output.object({ schema: evaluationSchema }),
     })
 
-    const evaluation = result.object
+    const evaluation = result.output as z.infer<typeof evaluationSchema>
+
 
     // Save to database
     const { data: savedEvaluation, error: dbError } = await supabase

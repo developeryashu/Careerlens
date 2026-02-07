@@ -98,7 +98,6 @@ ${jobDescription ? `\n\nTarget Job Description:\n${jobDescription}` : ""}`
       output: Output.object({ schema: analysisSchema }),
     })
 
-    // ✅ FIXED LINE
     const analysis = result.output
 
     const { data: savedAnalysis, error: dbError } = await supabase
