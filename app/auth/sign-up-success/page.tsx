@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Mail } from "lucide-react"
+import "./page.css"
 
 export default function SignUpSuccessPage() {
   return (
@@ -12,9 +13,9 @@ export default function SignUpSuccessPage() {
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">CL</span>
             </div>
-            <span className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
-              CareerLens
-            </span>
+<span className="text-2xl font-bold text-foreground brand-title">
+  CareerLens
+</span>
           </Link>
         </div>
 

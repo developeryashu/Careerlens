@@ -63,7 +63,7 @@ export default function SignUpPage() {
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">CL</span>
             </div>
-            <span className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
+            <span className="text-2xl font-bold text-foreground font-display">
               CareerLens
             </span>
           </Link>
