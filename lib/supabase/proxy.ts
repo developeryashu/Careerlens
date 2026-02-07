@@ -6,6 +6,12 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  // 🔍 ENV TEST (TEMPORARY — remove later)
+  console.log("SUPABASE URL =", process.env.NEXT_PUBLIC_SUPABASE_URL)
+  console.log("SUPABASE KEY =", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "FOUND" : "MISSING"
+  )
+
+
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
   const supabase = createServerClient(

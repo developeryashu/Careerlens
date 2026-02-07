@@ -144,12 +144,12 @@ export function DashboardSidebar({ user, profile }: SidebarProps) {
       )}
 
       {/* Mobile menu button - exposed via context or header */}
-      <button
+      <Button
         className="fixed bottom-4 right-4 z-40 lg:hidden p-3 rounded-full bg-primary text-primary-foreground shadow-lg"
         onClick={() => setMobileOpen(true)}
       >
         <LayoutDashboard className="h-5 w-5" />
-      </button>
+      </Button>
     </>
   )
 }
